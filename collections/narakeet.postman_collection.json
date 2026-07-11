@@ -1,0 +1,155 @@
+{
+  "info": {
+    "name": "Narakeet API",
+    "description": "Build narrated audio and video from text and Markdown scripts. Base URL: https://api.narakeet.com. All build requests authenticate with an x-api-key header. API access requires a top-up or metered commercial account. Long audio builds and video builds are asynchronous: they return a statusUrl that the client polls (no API key) until finished.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      { "key": "key", "value": "x-api-key", "type": "string" },
+      { "key": "value", "value": "{{apiKey}}", "type": "string" },
+      { "key": "in", "value": "header", "type": "string" }
+    ]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "https://api.narakeet.com", "type": "string" },
+    { "key": "apiKey", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Text to Speech",
+      "item": [
+        {
+          "name": "Build MP3 audio (streaming)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/octet-stream" },
+              { "key": "Content-Type", "value": "text/plain" }
+            ],
+            "body": { "mode": "raw", "raw": "Hello from the Narakeet text to speech API." },
+            "url": {
+              "raw": "{{baseUrl}}/text-to-speech/mp3?voice=mickey",
+              "host": ["{{baseUrl}}"],
+              "path": ["text-to-speech", "mp3"],
+              "query": [
+                { "key": "voice", "value": "mickey" }
+              ]
+            },
+            "description": "Short-content streaming mode (input up to ~1 KB). Returns audio bytes directly; duration is in the x-duration-seconds response header."
+          }
+        },
+        {
+          "name": "Build M4A audio (polling)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "text/plain" }
+            ],
+            "body": { "mode": "raw", "raw": "Longer scripts up to about 1024 KB use the JSON polling mode." },
+            "url": {
+              "raw": "{{baseUrl}}/text-to-speech/m4a?voice=victoria&voice-speed=1.1",
+              "host": ["{{baseUrl}}"],
+              "path": ["text-to-speech", "m4a"],
+              "query": [
+                { "key": "voice", "value": "victoria" },
+                { "key": "voice-speed", "value": "1.1" }
+              ]
+            },
+            "description": "Long-content JSON polling mode (input up to ~1024 KB). Returns a JSON object with a statusUrl to poll for the result."
+          }
+        },
+        {
+          "name": "Build WAV audio (polling only)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "text/plain" }
+            ],
+            "body": { "mode": "raw", "raw": "Uncompressed WAV output is only available via the polling API." },
+            "url": {
+              "raw": "{{baseUrl}}/text-to-speech/wav?voice=rodney",
+              "host": ["{{baseUrl}}"],
+              "path": ["text-to-speech", "wav"],
+              "query": [
+                { "key": "voice", "value": "rodney" }
+              ]
+            },
+            "description": "Uncompressed 16-bit PCM WAV output. Available only via the long-content polling mode."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Video",
+      "item": [
+        {
+          "name": "Request a video upload token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/video/upload-request/zip",
+              "host": ["{{baseUrl}}"],
+              "path": ["video", "upload-request", "zip"]
+            },
+            "description": "Returns a pre-signed url to PUT the zip archive to, plus repository and repositoryType identifiers for the build request."
+          }
+        },
+        {
+          "name": "Trigger a video build",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"source\": \"script.md\",\n  \"repository\": \"REPOSITORY_FROM_UPLOAD_TOKEN\",\n  \"repositoryType\": \"REPOSITORY_TYPE_FROM_UPLOAD_TOKEN\"\n}" },
+            "url": {
+              "raw": "{{baseUrl}}/video/build",
+              "host": ["{{baseUrl}}"],
+              "path": ["video", "build"]
+            },
+            "description": "Starts an asynchronous build from the uploaded zip. Returns a JSON object with a statusUrl to poll for the finished video."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Voices",
+      "item": [
+        {
+          "name": "List available voices",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/voices",
+              "host": ["{{baseUrl}}"],
+              "path": ["voices"]
+            },
+            "description": "Returns a JSON array of voices (name, language, languageCode, styles). Does not consume credits but counts toward the daily request quota; cache the result."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Account",
+      "item": [
+        {
+          "name": "Get account credits",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/account/credits",
+              "host": ["{{baseUrl}}"],
+              "path": ["account", "credits"]
+            },
+            "description": "Returns creditSeconds still available plus billing plan and identity metadata for the API key."
+          }
+        }
+      ]
+    }
+  ]
+}

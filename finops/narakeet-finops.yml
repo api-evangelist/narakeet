@@ -1,0 +1,103 @@
+specification: FinOps Framework
+specificationVersion: '1.0'
+schema: https://www.finops.org/framework/
+provider: Narakeet
+providerId: narakeet
+created: '2026-07-11'
+modified: '2026-07-11'
+reconciled: false
+tags:
+- Text to Speech
+- TTS
+- Audio
+- Video
+- FinOps
+- Cost Management
+- FOCUS
+description: >-
+  FinOps view of Narakeet spend. Narakeet bills on the duration of audio and
+  video produced, drawn down from prepaid top-up credits (or a metered
+  commercial plan) that never expire. The confirmed entry rate is roughly $0.20
+  per minute (6 USD for 30 minutes), falling toward roughly $0.05 per minute on
+  the largest packs. The same duration-based credits are consumed whether output
+  is produced through the web app or the API. The voice-listing and
+  account-credits API endpoints consume no credits but do count against the daily
+  request quota. The dominant cost driver is total minutes of audio/video
+  generated, so cost control means managing script length, avoiding unnecessary
+  re-builds, and buying larger packs to lower the per-minute rate.
+notes: >-
+  Exact per-unit rates above the confirmed entry pack are not reconciled here;
+  verify on the Narakeet pricing page. Use the Account Credits API
+  (GET /account/credits, creditSeconds) to monitor remaining balance
+  programmatically and gate jobs before starting long builds.
+sources:
+- https://www.narakeet.com/docs/pricing/
+- https://www.narakeet.com/docs/automating/
+- https://www.narakeet.com/docs/automating/account-credits-api/
+- https://focus.finops.org/focus-specification/v1-3/
+alignedWith:
+  framework: FinOps Foundation Framework
+  frameworkUrl: https://www.finops.org/framework/
+  dataSpec: FOCUS
+  dataSpecVersion: '1.3'
+  dataSpecUrl: https://focus.finops.org/focus-specification/v1-3/
+publisherName: Narakeet
+serviceCategory: AI and Machine Learning
+billingModel:
+  pricingCategory: Usage-Based
+  billingFrequency: Prepaid
+  billingCurrency: USD
+  chargeCategories:
+  - Purchase
+  - Usage
+focusColumns:
+  ServiceName: Narakeet
+  ServiceCategory: AI and Machine Learning
+  ProviderName: Narakeet
+  PublisherName: Narakeet
+  InvoiceIssuerName: Narakeet
+  BillingCurrency: USD
+  ChargeCategory: Usage
+  PricingCategory: Usage-Based
+meters:
+- name: audio_minutes
+  description: Minutes of narrated audio produced via the text-to-speech API or web app, drawn from credits.
+  unit: minutes
+  aggregation: sum
+  dimensions:
+  - account
+  - voice
+  - language
+- name: video_minutes
+  description: Minutes of video produced via the Markdown-to-video build, drawn from credits.
+  unit: minutes
+  aggregation: sum
+  dimensions:
+  - account
+  - project
+- name: credit_seconds
+  description: Prepaid credit seconds remaining on the account, reported by the Account Credits API.
+  unit: seconds
+  aggregation: last
+  dimensions:
+  - account
+  - plan
+- name: api_requests
+  description: API requests made against the daily quota (including no-cost voices and credits calls).
+  unit: requests
+  aggregation: sum
+  dimensions:
+  - account
+  - endpoint
+principles:
+- name: Visibility
+  description: Track audio and video minutes produced per account, voice, and project, and poll the Account Credits API to watch the remaining credit balance.
+- name: Allocation
+  description: Separate API keys or accounts per team/product so production minutes map to internal cost centers.
+- name: Optimization
+  description: Trim script length, cache and reuse generated audio/video instead of rebuilding, cache the voice list, and buy larger credit packs to lower the per-minute rate.
+- name: Accountability
+  description: Assign an owner per account/key and reconcile monthly minutes produced against purchased credits before topping up.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

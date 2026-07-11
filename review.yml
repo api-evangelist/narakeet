@@ -1,0 +1,93 @@
+aid: narakeet
+name: Narakeet
+review:
+  question: Does Narakeet expose a documented public WebSocket API?
+  answer: false
+  date: '2026-07-11'
+  reviewer: API Evangelist
+  asyncapiSpecCreated: false
+  asyncapiScopeNote: |
+    No AsyncAPI document was authored. Narakeet's public API is request/response
+    REST over HTTPS under https://api.narakeet.com. Longer audio builds and all
+    video builds are asynchronous, but they are consumed by client-initiated
+    HTTP polling of a pre-signed statusUrl - not by any server-push transport.
+    There is no WebSocket and no Server-Sent Events surface to model. Short audio
+    builds return the audio bytes synchronously as a single HTTP response.
+findings:
+  summary: |
+    Narakeet does not publish a documented public WebSocket API. Narakeet is an
+    AI text-to-speech and video generation service. Its automation API is pure
+    request/response REST over HTTPS with a base URL of
+    https://api.narakeet.com, authenticated with an x-api-key header. Text to
+    speech has two modes over the same POST endpoint: a short-content streaming
+    mode (Accept: application/octet-stream, ~1 KB input) that returns audio bytes
+    directly in the HTTP response, and a long-content mode that returns a JSON
+    statusUrl the client polls until the build finishes. The Markdown-to-video
+    workflow uploads a zip to a pre-signed URL, POSTs a build, and then polls a
+    statusUrl. Voice listing (GET /voices) and account credits (GET
+    /account/credits) are plain REST. No realtime, bidirectional, or streaming
+    WebSocket (ws:// or wss://) endpoint is documented anywhere in Narakeet's
+    developer documentation as of the review date. The "streaming" audio mode is
+    a single synchronous HTTP response body, not a WebSocket stream.
+  openSource: |
+    Narakeet is a commercial hosted SaaS. The API and web app are not open
+    source. Narakeet publishes open-source client examples and a command-line
+    tool plus a GitHub Action for building video from repository-hosted scripts,
+    but the core service is proprietary. API access requires a top-up or metered
+    commercial account; free and unmetered accounts cannot call the API.
+  transports:
+    - protocol: REST
+      scheme: https
+      baseURL: https://api.narakeet.com
+      documented: true
+      note: Text-to-speech, video build, voices, and account credits are all REST over HTTPS.
+    - protocol: HTTP Polling
+      scheme: https
+      documented: true
+      note: Long audio builds and video builds return a pre-signed statusUrl that the client polls (GET) until finished is true. Client-initiated polling, not server push.
+    - protocol: HTTP Streaming Response
+      scheme: https
+      documented: true
+      note: Short audio builds with Accept application/octet-stream return audio bytes in a single synchronous HTTP response body. Not WebSocket, not chunked server-push events.
+    - protocol: WebSocket
+      scheme: wss
+      documented: false
+      note: No WebSocket endpoint is documented anywhere in Narakeet's automation documentation as of the review date.
+  endpointsConfirmedRest:
+    - POST https://api.narakeet.com/text-to-speech/mp3
+    - POST https://api.narakeet.com/text-to-speech/m4a
+    - POST https://api.narakeet.com/text-to-speech/wav
+    - GET  https://api.narakeet.com/video/upload-request/zip
+    - POST https://api.narakeet.com/video/build
+    - GET  https://api.narakeet.com/voices
+    - GET  https://api.narakeet.com/account/credits
+  pollingPattern:
+    - Long audio and video builds return a JSON object with a statusUrl.
+    - The client GETs the statusUrl (pre-signed, no API key) until finished is true.
+    - Status fields include finished, succeeded, percent, message, result, poster, durationInSeconds.
+    - The result field is a time-limited download URL for the finished audio or video.
+sources:
+  - url: https://www.narakeet.com/docs/automating/
+    type: Documentation
+    note: Developer API overview - lists text-to-speech, video, voice listing, and account credits APIs; x-api-key auth; 86,400 requests/day default quota. No WebSocket.
+  - url: https://www.narakeet.com/docs/automating/text-to-speech-api/
+    type: APIReference
+    note: Text-to-speech REST endpoint under /text-to-speech/{mp3,m4a,wav}; streaming vs JSON polling modes; all HTTPS request/response.
+  - url: https://www.narakeet.com/docs/automating/video-api/
+    type: APIReference
+    note: Video build workflow - GET /video/upload-request/zip, PUT zip, POST /video/build, poll statusUrl. HTTP polling, not WebSocket.
+  - url: https://www.narakeet.com/docs/automating/listing-voices-api/
+    type: APIReference
+    note: GET /voices returns a JSON array of voices. Plain REST.
+  - url: https://www.narakeet.com/docs/automating/account-credits-api/
+    type: APIReference
+    note: GET /account/credits returns creditSeconds and billing metadata. Plain REST.
+actions:
+  asyncapiPath: null
+  apisYmlUpdated: true
+  reason: |
+    No WebSocket protocol surface exists. Narakeet's own public API is
+    request/response REST plus client-initiated HTTP polling of pre-signed
+    status URLs for asynchronous audio and video builds. No AsyncAPI document
+    was created because there is no server-push transport (WebSocket or SSE) on
+    Narakeet's own API to model.

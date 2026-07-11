@@ -1,0 +1,82 @@
+specification: API Commons Rate Limits
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
+provider: Narakeet
+providerId: narakeet
+created: '2026-07-11'
+modified: '2026-07-11'
+reconciled: false
+tags:
+- Text to Speech
+- TTS
+- Audio
+- Video
+- Rate Limiting
+- Quotas
+description: >-
+  Narakeet enforces a default request quota of 86,400 requests per day (an
+  average of 1 request per second) per account. Higher limits are available on
+  request by contacting Narakeet. Beyond the request-count quota, throughput is
+  bounded by content-size limits per call and by processing-time ceilings: the
+  short-content streaming audio mode accepts about 1 KB of input and must
+  complete within roughly 30 seconds, while the long-content polling audio mode
+  accepts about 1024 KB and may take up to about 45 minutes to build. The
+  voice-listing and account-credits endpoints do not consume production credits
+  but each call still counts toward the daily request quota, so caching their
+  results (for example once per day) is recommended.
+notes: >-
+  API access requires a top-up or metered commercial account; free and unmetered
+  accounts cannot call the API. Verify the current default quota and any raised
+  limits with Narakeet (contact@narakeet.com) during reconciliation.
+sources:
+- https://www.narakeet.com/docs/automating/
+- https://www.narakeet.com/docs/automating/text-to-speech-api/
+- https://www.narakeet.com/docs/automating/listing-voices-api/
+responseCodes:
+  throttled: 429
+limits:
+- name: Daily Request Quota
+  scope: account
+  metric: requests
+  limit: 86400 per day
+  notes: Default quota, averaging 1 request per second. Higher limits available on request.
+- name: Request Rate
+  scope: account
+  metric: requests
+  limit: ~1 per second
+  notes: Implied by the 86,400/day default; sustained bursts above this are throttled.
+- name: Streaming Audio Input Size
+  scope: request
+  metric: bytes
+  limit: ~1024 bytes (1 KB)
+  notes: Short-content streaming mode (Accept application/octet-stream) only; larger input must use the polling mode.
+- name: Polling Audio Input Size
+  scope: request
+  metric: bytes
+  limit: ~1048576 bytes (1024 KB)
+  notes: Long-content JSON polling mode maximum input size.
+- name: Streaming Audio Processing Time
+  scope: request
+  metric: seconds
+  limit: ~30
+  notes: Short-content streaming builds must complete within about 30 seconds.
+- name: Polling Build Processing Time
+  scope: request
+  metric: seconds
+  limit: ~2700 (45 minutes)
+  notes: Long-content audio and video builds may take up to about 45 minutes.
+- name: Voice / Credits Endpoint Calls
+  scope: account
+  metric: requests
+  limit: counts toward daily quota
+  notes: /voices and /account/credits consume no production credit but count against the 86,400/day request quota; cache results.
+policies:
+- name: Retry and Backoff
+  description: On 429 responses, clients should back off with exponential delay and jitter and stay under the ~1 request/second average.
+- name: Poll Interval
+  description: When polling a build statusUrl, poll at a modest interval (for example every few seconds) rather than tightly looping, to avoid consuming request quota unnecessarily.
+- name: Cache Voice List
+  description: Cache the /voices response (recommended once per day) since the voice catalog changes infrequently and each call counts toward the quota.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

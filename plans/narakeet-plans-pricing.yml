@@ -1,0 +1,150 @@
+specification: API Commons Plans
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans
+provider: Narakeet
+providerId: narakeet
+created: '2026-07-11'
+modified: '2026-07-11'
+reconciled: false
+tags:
+- Text to Speech
+- TTS
+- Audio
+- Video
+- Plans
+description: >-
+  Narakeet bills primarily on a top-up credit model measured by the duration of
+  audio or video produced, rather than on a fixed monthly seat. Credits never
+  expire. There is a free-forever tier for evaluation, but it has no API access
+  and no commercial use. API access is only available on paid commercial
+  accounts (top-up or metered). The one price confirmed on the pricing page is
+  the entry pack - 6 USD for 30 minutes at $0.20 per minute - with larger packs
+  (300, 1000, 2500, and 10,000 minutes) offering progressively lower per-minute
+  rates. Exact prices for the larger packs are not reconciled here.
+notes: >-
+  The audio and video APIs consume the same duration-based credits as the web
+  app; the voice-listing and account-credits endpoints do not consume credits
+  but count toward the daily request quota. Verify current pack prices and the
+  metered-billing option on the Narakeet pricing page during reconciliation.
+  Volume discounts above 10,000 minutes are available by contacting Narakeet.
+currencies:
+- USD
+- GBP
+- EUR
+- INR
+sources:
+- https://www.narakeet.com/docs/pricing/
+- https://www.narakeet.com/docs/automating/
+- https://www.narakeet.com/docs/automating/account-credits-api/
+plans:
+- id: narakeet-free
+  name: Free
+  type: free
+  description: >-
+    Free-forever tier for evaluation. No commercial use and no API access.
+    Capped at 20 conversions with a 1 KB audio script limit, a 10 KB video
+    script limit, up to 30 video scenes, 10 MB uploads, and a 10-minute
+    transcription limit.
+  entries:
+  - label: Included Conversions
+    name: free_conversions
+    type: usage
+    metric: conversions
+    limit: 20
+    timeFrame: lifetime
+    geo: global
+    unit: 1
+    price: free (no API access, no commercial use)
+    userMultiplied: false
+  elements:
+  - name: Web App Access
+  - name: Watermark-Free Evaluation Output
+- id: narakeet-topup-30
+  name: Top-Up - 30 Minutes
+  type: usage
+  description: >-
+    Entry top-up pack. 30 minutes of audio/video production credit for 6 USD
+    ($0.20 per minute). Unlocks commercial use, SSML, batch audio, larger script
+    and file limits, and API access. Credits never expire.
+  entries:
+  - label: Production Minutes
+    name: topup_30_minutes
+    type: usage
+    metric: minutes
+    limit: 30
+    timeFrame: lifetime
+    geo: global
+    unit: 1
+    price: $6.00 (approximately $0.20 per minute)
+    userMultiplied: false
+  elements:
+  - name: API Access
+  - name: Commercial Use
+  - name: SSML Scripting
+  - name: Batch Audio Creation
+- id: narakeet-topup-larger
+  name: Top-Up - Larger Packs
+  type: usage
+  description: >-
+    Larger top-up packs of 300, 1000, 2500, and 10,000 minutes at progressively
+    lower per-minute rates (down toward roughly $0.05 per minute on the largest
+    packs). Exact pack prices are not reconciled here - see the pricing page.
+  entries:
+  - label: Production Minutes
+    name: topup_larger_minutes
+    type: usage
+    metric: minutes
+    limit: -1
+    timeFrame: lifetime
+    geo: global
+    unit: 1
+    price: tiered per-minute rate (see pricing page)
+    userMultiplied: false
+  elements:
+  - name: API Access
+  - name: Commercial Use
+  - name: Lower Per-Minute Rate
+- id: narakeet-metered
+  name: Metered Commercial
+  type: usage
+  description: >-
+    Metered commercial billing option that, like the top-up packs, grants API
+    access for automated audio and video production. Suited to accounts with
+    ongoing, variable API usage.
+  entries:
+  - label: Metered Production
+    name: metered_production
+    type: usage
+    metric: minutes
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: metered per-minute (see pricing page)
+    userMultiplied: false
+  elements:
+  - name: API Access
+  - name: Commercial Use
+- id: narakeet-volume
+  name: Volume / Custom
+  type: enterprise
+  description: >-
+    Custom volume pricing for purchases above 10,000 minutes, arranged by
+    contacting Narakeet directly.
+  entries:
+  - label: Volume Agreement
+    name: volume
+    type: flat
+    metric: contract
+    limit: -1
+    timeFrame: year
+    geo: global
+    unit: 1
+    price: contact Narakeet
+    userMultiplied: false
+  elements:
+  - name: Custom Volume Pricing
+  - name: Higher Daily Request Limits
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com
