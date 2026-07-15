@@ -122,6 +122,8 @@ apis:
     the billing plan and the identity of the API key. Useful for gating jobs and
     surfacing remaining balance before starting a long audio or video build.
 common:
+- type: AgenticAccess
+  url: agentic-access/narakeet-agentic-access.yml
 - type: DomainSecurity
   url: security/narakeet-domain-security.yml
 - type: Authentication
