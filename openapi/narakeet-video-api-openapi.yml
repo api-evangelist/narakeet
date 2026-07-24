@@ -1,0 +1,153 @@
+openapi: 3.0.3
+info:
+  title: Narakeet Account Video API
+  description: The Narakeet API turns text and Markdown scripts into narrated audio and video programmatically. It exposes a text-to-speech endpoint (returning MP3, M4A, or WAV) in two modes - a short-content streaming mode that returns audio bytes directly, and a long-content JSON polling mode that returns a status URL to poll while a longer build runs asynchronously - plus a Markdown-to-video build workflow (upload a zip of the script and assets, trigger a build, then poll for the finished MP4), a voice listing endpoint, and an account credits endpoint. All build requests authenticate with an `x-api-key` header. API access requires a top-up or metered commercial Narakeet account; free and unmetered accounts cannot use the API. The default quota is 86,400 requests per day (1 per second). Pre-signed status and result URLs returned by the polling and video workflows do not require the API key.
+  version: '1.0'
+  contact:
+    name: Narakeet
+    url: https://www.narakeet.com
+    email: contact@narakeet.com
+servers:
+- url: https://api.narakeet.com
+  description: Narakeet API
+security:
+- apiKeyAuth: []
+tags:
+- name: Video
+  description: Build video from a Markdown script and assets packaged as a zip archive.
+paths:
+  /video/upload-request/zip:
+    get:
+      operationId: createVideoUploadRequest
+      tags:
+      - Video
+      summary: Request a video upload token
+      description: Requests a pre-signed upload location for a zip archive containing the video script and its assets. Returns the pre-signed `url` to PUT the zip to, along with the `repository` and `repositoryType` identifiers to pass to the build endpoint.
+      responses:
+        '200':
+          description: Upload request created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /video/build:
+    post:
+      operationId: buildVideo
+      tags:
+      - Video
+      summary: Trigger a video build
+      description: Starts an asynchronous video build from a previously uploaded zip archive (or a public zip URL). Returns a JSON object with a `statusUrl` to poll until the build finishes.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VideoBuildRequest'
+      responses:
+        '200':
+          description: Build started.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BuildTask'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /status:
+    get:
+      operationId: pollBuildStatus
+      tags:
+      - Video
+      summary: Poll a build status URL
+      description: Represents polling the pre-signed `statusUrl` returned by the polling audio build and the video build. The actual URL is time-limited and pre-signed, so no API key is required. Poll until `finished` is true, then read the `result` download URL. This path is illustrative; always use the exact statusUrl returned in the build response.
+      responses:
+        '200':
+          description: Current build status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BuildStatus'
+components:
+  schemas:
+    VideoBuildRequest:
+      type: object
+      required:
+      - source
+      properties:
+        source:
+          type: string
+          description: Path to the Markdown or text script inside the uploaded archive.
+          example: script.md
+        repository:
+          type: string
+          description: The repository identifier returned by the upload request.
+        repositoryType:
+          type: string
+          description: The repository type returned by the upload request, or a public zip URL type.
+    BuildStatus:
+      type: object
+      description: The state of an asynchronous build, returned when polling the status URL.
+      properties:
+        message:
+          type: string
+          description: Status or error message.
+        finished:
+          type: boolean
+          description: True when the build has completed (successfully or not).
+        succeeded:
+          type: boolean
+          description: True when the build finished successfully.
+        percent:
+          type: integer
+          description: Build progress from 0 to 100.
+        result:
+          type: string
+          format: uri
+          description: Download URL for the finished audio or video (valid for a limited time).
+        poster:
+          type: string
+          format: uri
+          description: Poster image URL for a finished video (video builds only).
+        durationInSeconds:
+          type: integer
+          description: Duration of the produced media in seconds.
+    BuildTask:
+      type: object
+      description: Response from a polling audio build or a video build.
+      properties:
+        statusUrl:
+          type: string
+          format: uri
+          description: Pre-signed URL to poll for build progress and the final result.
+    UploadRequest:
+      type: object
+      description: Pre-signed upload location and identifiers for a video zip archive.
+      properties:
+        url:
+          type: string
+          format: uri
+          description: Pre-signed URL to PUT the zip archive to (no API key on this request).
+        contentType:
+          type: string
+          description: Content-Type header value to use when uploading the zip.
+        repository:
+          type: string
+          description: Identifier of the uploaded repository, passed to the build endpoint.
+        repositoryType:
+          type: string
+          description: Type of the repository, passed to the build endpoint.
+  responses:
+    Unauthorized:
+      description: Missing or invalid API key, or the account is not eligible for API access.
+    TooManyRequests:
+      description: The daily request quota (default 86,400 per day, 1 per second) was exceeded.
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key

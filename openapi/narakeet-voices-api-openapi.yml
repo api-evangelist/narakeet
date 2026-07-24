@@ -1,0 +1,71 @@
+openapi: 3.0.3
+info:
+  title: Narakeet Account Voices API
+  description: The Narakeet API turns text and Markdown scripts into narrated audio and video programmatically. It exposes a text-to-speech endpoint (returning MP3, M4A, or WAV) in two modes - a short-content streaming mode that returns audio bytes directly, and a long-content JSON polling mode that returns a status URL to poll while a longer build runs asynchronously - plus a Markdown-to-video build workflow (upload a zip of the script and assets, trigger a build, then poll for the finished MP4), a voice listing endpoint, and an account credits endpoint. All build requests authenticate with an `x-api-key` header. API access requires a top-up or metered commercial Narakeet account; free and unmetered accounts cannot use the API. The default quota is 86,400 requests per day (1 per second). Pre-signed status and result URLs returned by the polling and video workflows do not require the API key.
+  version: '1.0'
+  contact:
+    name: Narakeet
+    url: https://www.narakeet.com
+    email: contact@narakeet.com
+servers:
+- url: https://api.narakeet.com
+  description: Narakeet API
+security:
+- apiKeyAuth: []
+tags:
+- name: Voices
+  description: List the voices available for audio and video production.
+paths:
+  /voices:
+    get:
+      operationId: listVoices
+      tags:
+      - Voices
+      summary: List available voices
+      description: Returns a JSON array of the voices available to your account. This endpoint does not consume credits, but each call counts toward the daily request quota; caching the result (for example once per day) is recommended.
+      responses:
+        '200':
+          description: A list of available voices.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Voice'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+components:
+  responses:
+    Unauthorized:
+      description: Missing or invalid API key, or the account is not eligible for API access.
+    TooManyRequests:
+      description: The daily request quota (default 86,400 per day, 1 per second) was exceeded.
+  schemas:
+    Voice:
+      type: object
+      description: A voice available for audio and video production.
+      properties:
+        name:
+          type: string
+          description: Voice identifier used with the text-to-speech voice query parameter.
+          example: mickey
+        language:
+          type: string
+          description: Human-friendly language / dialect description.
+          example: English (US)
+        languageCode:
+          type: string
+          description: Locale code.
+          example: en-US
+        styles:
+          type: array
+          description: Supported narration styles for the voice.
+          items:
+            type: string
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
