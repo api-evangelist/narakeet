@@ -12,7 +12,20 @@ description: Narakeet turns text and Markdown scripts into realistic narrated au
   builds always upload a zip, trigger a build, and poll for the finished MP4. All
   build requests authenticate with an x-api-key header, and API access requires a
   top-up or metered commercial account.
-image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+accessModel:
+  pricing: freemium
+  onboarding: self-serve
+  trial: false
+  try_now: true
+  public: false
+  label: Freemium · Self-serve signup
+  confidence: high
+  source:
+  - plans
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/narakeet.png
 tags:
 - Text to Speech
 - TTS
@@ -25,102 +38,126 @@ created: '2026-07-11'
 modified: '2026-07-11'
 specificationVersion: '0.19'
 apis:
-- aid: narakeet:narakeet-text-to-speech-api
-  name: Narakeet Text to Speech API
-  tags:
-  - Text to Speech
-  - TTS
-  - Audio
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+- aid: narakeet:narakeet-account-api
+  name: Narakeet Account API
+  description: Check remaining account credits.
   humanURL: https://www.narakeet.com/docs/automating/text-to-speech-api/
   baseURL: https://api.narakeet.com
-  properties:
-  - url: https://www.narakeet.com/docs/automating/text-to-speech-api/
-    type: Documentation
-  - url: https://www.narakeet.com/docs/automating/text-to-speech-api/
-    type: APIReference
-  - url: openapi/narakeet-openapi.yml
-    type: OpenAPI
-  - url: collections/narakeet.postman_collection.json
-    type: PostmanCollection
-  - url: collections/narakeet.opencollection.json
-    type: OpenCollection
-  description: Convert text, SubRip, or WebVTT input into narrated audio in MP3, M4A,
-    or WAV. Runs as a short-content streaming call (returns audio bytes directly,
-    ~1 KB input) or a long-content asynchronous build (returns a status URL to poll,
-    ~1024 KB input). Voice, speed, and volume are set via query parameters, with
-    batch and subtitle output modes selected by the Accept header.
-- aid: narakeet:narakeet-video-api
-  name: Narakeet Markdown to Video API
-  tags:
-  - Video
-  - Markdown
-  - Media Generation
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://www.narakeet.com/docs/automating/video-api/
-  baseURL: https://api.narakeet.com
-  properties:
-  - url: https://www.narakeet.com/docs/automating/video-api/
-    type: Documentation
-  - url: https://www.narakeet.com/docs/automating/video-api/
-    type: APIReference
-  - url: openapi/narakeet-openapi.yml
-    type: OpenAPI
-  - url: collections/narakeet.postman_collection.json
-    type: PostmanCollection
-  - url: collections/narakeet.opencollection.json
-    type: OpenCollection
-  description: Build narrated video from a Markdown or text script plus its assets.
-    Request a pre-signed upload token, PUT a zip archive of the script and media,
-    trigger an asynchronous build, then poll the returned status URL for the finished
-    video and poster image.
-- aid: narakeet:narakeet-voices-api
-  name: Narakeet Voice Listing API
-  tags:
-  - Voices
-  - Languages
-  - Catalog
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://www.narakeet.com/docs/automating/listing-voices-api/
-  baseURL: https://api.narakeet.com
-  properties:
-  - url: https://www.narakeet.com/docs/automating/listing-voices-api/
-    type: Documentation
-  - url: https://www.narakeet.com/docs/automating/listing-voices-api/
-    type: APIReference
-  - url: openapi/narakeet-openapi.yml
-    type: OpenAPI
-  - url: collections/narakeet.postman_collection.json
-    type: PostmanCollection
-  - url: collections/narakeet.opencollection.json
-    type: OpenCollection
-  description: Retrieve the JSON list of voices available to your account - each with
-    a name, language description, locale code, and supported narration styles - so
-    integrations can keep an up-to-date voice picker. Does not consume credits but
-    counts toward the daily request quota.
-- aid: narakeet:narakeet-account-credits-api
-  name: Narakeet Account Credits API
   tags:
   - Account
-  - Credits
-  - Billing
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://www.narakeet.com/docs/automating/account-credits-api/
-  baseURL: https://api.narakeet.com
   properties:
-  - url: https://www.narakeet.com/docs/automating/account-credits-api/
-    type: Documentation
-  - url: https://www.narakeet.com/docs/automating/account-credits-api/
-    type: APIReference
-  - url: openapi/narakeet-openapi.yml
-    type: OpenAPI
-  - url: collections/narakeet.postman_collection.json
-    type: PostmanCollection
-  - url: collections/narakeet.opencollection.json
-    type: OpenCollection
-  description: Check the credit seconds still available on your account, along with
-    the billing plan and the identity of the API key. Useful for gating jobs and
-    surfacing remaining balance before starting a long audio or video build.
+  - type: OpenAPI
+    url: openapi/narakeet-account-api-openapi.yml
+  - type: Documentation
+    url: https://www.narakeet.com/docs/automating/text-to-speech-api/
+  - type: APIReference
+    url: https://www.narakeet.com/docs/automating/text-to-speech-api/
+  - type: PostmanCollection
+    url: collections/narakeet.postman_collection.json
+  - type: OpenCollection
+    url: collections/narakeet.opencollection.json
+  - type: Documentation
+    url: https://www.narakeet.com/docs/automating/video-api/
+  - type: APIReference
+    url: https://www.narakeet.com/docs/automating/video-api/
+  - type: Documentation
+    url: https://www.narakeet.com/docs/automating/listing-voices-api/
+  - type: APIReference
+    url: https://www.narakeet.com/docs/automating/listing-voices-api/
+  - type: Documentation
+    url: https://www.narakeet.com/docs/automating/account-credits-api/
+  - type: APIReference
+    url: https://www.narakeet.com/docs/automating/account-credits-api/
+- aid: narakeet:narakeet-text-to-speech-api
+  name: Narakeet Text to Speech API
+  description: Build narrated audio (MP3, M4A, WAV) from text, SubRip, or WebVTT input.
+  humanURL: https://www.narakeet.com/docs/automating/text-to-speech-api/
+  baseURL: https://api.narakeet.com
+  tags:
+  - Text to Speech
+  properties:
+  - type: OpenAPI
+    url: openapi/narakeet-text-to-speech-api-openapi.yml
+  - type: Documentation
+    url: https://www.narakeet.com/docs/automating/text-to-speech-api/
+  - type: APIReference
+    url: https://www.narakeet.com/docs/automating/text-to-speech-api/
+  - type: PostmanCollection
+    url: collections/narakeet.postman_collection.json
+  - type: OpenCollection
+    url: collections/narakeet.opencollection.json
+  - type: Documentation
+    url: https://www.narakeet.com/docs/automating/video-api/
+  - type: APIReference
+    url: https://www.narakeet.com/docs/automating/video-api/
+  - type: Documentation
+    url: https://www.narakeet.com/docs/automating/listing-voices-api/
+  - type: APIReference
+    url: https://www.narakeet.com/docs/automating/listing-voices-api/
+  - type: Documentation
+    url: https://www.narakeet.com/docs/automating/account-credits-api/
+  - type: APIReference
+    url: https://www.narakeet.com/docs/automating/account-credits-api/
+- aid: narakeet:narakeet-video-api
+  name: Narakeet Video API
+  description: Build video from a Markdown script and assets packaged as a zip archive.
+  humanURL: https://www.narakeet.com/docs/automating/text-to-speech-api/
+  baseURL: https://api.narakeet.com
+  tags:
+  - Video
+  properties:
+  - type: OpenAPI
+    url: openapi/narakeet-video-api-openapi.yml
+  - type: Documentation
+    url: https://www.narakeet.com/docs/automating/text-to-speech-api/
+  - type: APIReference
+    url: https://www.narakeet.com/docs/automating/text-to-speech-api/
+  - type: PostmanCollection
+    url: collections/narakeet.postman_collection.json
+  - type: OpenCollection
+    url: collections/narakeet.opencollection.json
+  - type: Documentation
+    url: https://www.narakeet.com/docs/automating/video-api/
+  - type: APIReference
+    url: https://www.narakeet.com/docs/automating/video-api/
+  - type: Documentation
+    url: https://www.narakeet.com/docs/automating/listing-voices-api/
+  - type: APIReference
+    url: https://www.narakeet.com/docs/automating/listing-voices-api/
+  - type: Documentation
+    url: https://www.narakeet.com/docs/automating/account-credits-api/
+  - type: APIReference
+    url: https://www.narakeet.com/docs/automating/account-credits-api/
+- aid: narakeet:narakeet-voices-api
+  name: Narakeet Voices API
+  description: List the voices available for audio and video production.
+  humanURL: https://www.narakeet.com/docs/automating/text-to-speech-api/
+  baseURL: https://api.narakeet.com
+  tags:
+  - Voices
+  properties:
+  - type: OpenAPI
+    url: openapi/narakeet-voices-api-openapi.yml
+  - type: Documentation
+    url: https://www.narakeet.com/docs/automating/text-to-speech-api/
+  - type: APIReference
+    url: https://www.narakeet.com/docs/automating/text-to-speech-api/
+  - type: PostmanCollection
+    url: collections/narakeet.postman_collection.json
+  - type: OpenCollection
+    url: collections/narakeet.opencollection.json
+  - type: Documentation
+    url: https://www.narakeet.com/docs/automating/video-api/
+  - type: APIReference
+    url: https://www.narakeet.com/docs/automating/video-api/
+  - type: Documentation
+    url: https://www.narakeet.com/docs/automating/listing-voices-api/
+  - type: APIReference
+    url: https://www.narakeet.com/docs/automating/listing-voices-api/
+  - type: Documentation
+    url: https://www.narakeet.com/docs/automating/account-credits-api/
+  - type: APIReference
+    url: https://www.narakeet.com/docs/automating/account-credits-api/
 common:
 - type: AgenticAccess
   url: agentic-access/narakeet-agentic-access.yml
