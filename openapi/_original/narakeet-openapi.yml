@@ -1,0 +1,345 @@
+openapi: 3.0.3
+info:
+  title: Narakeet API
+  description: >-
+    The Narakeet API turns text and Markdown scripts into narrated audio and
+    video programmatically. It exposes a text-to-speech endpoint (returning MP3,
+    M4A, or WAV) in two modes - a short-content streaming mode that returns audio
+    bytes directly, and a long-content JSON polling mode that returns a status URL
+    to poll while a longer build runs asynchronously - plus a Markdown-to-video
+    build workflow (upload a zip of the script and assets, trigger a build, then
+    poll for the finished MP4), a voice listing endpoint, and an account credits
+    endpoint. All build requests authenticate with an `x-api-key` header. API
+    access requires a top-up or metered commercial Narakeet account; free and
+    unmetered accounts cannot use the API. The default quota is 86,400 requests
+    per day (1 per second). Pre-signed status and result URLs returned by the
+    polling and video workflows do not require the API key.
+  version: '1.0'
+  contact:
+    name: Narakeet
+    url: https://www.narakeet.com
+    email: contact@narakeet.com
+servers:
+  - url: https://api.narakeet.com
+    description: Narakeet API
+security:
+  - apiKeyAuth: []
+tags:
+  - name: Text to Speech
+    description: Build narrated audio (MP3, M4A, WAV) from text, SubRip, or WebVTT input.
+  - name: Video
+    description: Build video from a Markdown script and assets packaged as a zip archive.
+  - name: Voices
+    description: List the voices available for audio and video production.
+  - name: Account
+    description: Check remaining account credits.
+paths:
+  /text-to-speech/{format}:
+    post:
+      operationId: buildTextToSpeech
+      tags:
+        - Text to Speech
+      summary: Build speech audio from text
+      description: >-
+        Converts text (or SubRip / WebVTT subtitle input) into narrated audio.
+        Two modes are selected by the `Accept` header. With
+        `Accept: application/octet-stream` the endpoint operates as a short-content
+        streaming API - input is limited to about 1 KB and the audio bytes are
+        returned directly in the response, with the duration in the
+        `x-duration-seconds` response header (WAV is not available in this mode).
+        Without that Accept header the endpoint operates as a long-content polling
+        API - input up to about 1024 KB is accepted and the response is a JSON
+        object containing a `statusUrl` to poll. Use `Accept: application/zip` with
+        multi-scene input (scenes separated by `---`) for batch audio, or
+        `Accept: application/json+vtt` to also receive subtitle result URLs.
+      parameters:
+        - name: format
+          in: path
+          required: true
+          description: Output audio format. WAV is only available via the polling API.
+          schema:
+            type: string
+            enum:
+              - mp3
+              - m4a
+              - wav
+        - name: voice
+          in: query
+          required: false
+          description: Name of the voice to use (see the Voices endpoint for valid names).
+          schema:
+            type: string
+            example: mickey
+        - name: voice-speed
+          in: query
+          required: false
+          description: Reading speed multiplier (1.2 = 20% faster, 0.8 = 20% slower).
+          schema:
+            type: number
+            example: 1.1
+        - name: voice-volume
+          in: query
+          required: false
+          description: Relative loudness of the narration.
+          schema:
+            type: string
+            example: soft
+      requestBody:
+        required: true
+        description: >-
+          The script to narrate. Content-Type text/plain for plain text,
+          application/x-subrip (or text/srt) for SubRip, or text/vtt for WebVTT.
+        content:
+          text/plain:
+            schema:
+              type: string
+              example: Hello from the Narakeet text to speech API.
+      responses:
+        '200':
+          description: >-
+            Streaming mode returns the audio bytes directly. Polling mode returns a
+            JSON object with a statusUrl to poll for the build result.
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BuildTask'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /video/upload-request/zip:
+    get:
+      operationId: createVideoUploadRequest
+      tags:
+        - Video
+      summary: Request a video upload token
+      description: >-
+        Requests a pre-signed upload location for a zip archive containing the
+        video script and its assets. Returns the pre-signed `url` to PUT the zip
+        to, along with the `repository` and `repositoryType` identifiers to pass
+        to the build endpoint.
+      responses:
+        '200':
+          description: Upload request created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /video/build:
+    post:
+      operationId: buildVideo
+      tags:
+        - Video
+      summary: Trigger a video build
+      description: >-
+        Starts an asynchronous video build from a previously uploaded zip archive
+        (or a public zip URL). Returns a JSON object with a `statusUrl` to poll
+        until the build finishes.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VideoBuildRequest'
+      responses:
+        '200':
+          description: Build started.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BuildTask'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /voices:
+    get:
+      operationId: listVoices
+      tags:
+        - Voices
+      summary: List available voices
+      description: >-
+        Returns a JSON array of the voices available to your account. This
+        endpoint does not consume credits, but each call counts toward the daily
+        request quota; caching the result (for example once per day) is
+        recommended.
+      responses:
+        '200':
+          description: A list of available voices.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Voice'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /account/credits:
+    get:
+      operationId: getAccountCredits
+      tags:
+        - Account
+      summary: Get remaining account credits
+      description: >-
+        Returns the quantity of credit seconds still available on the account,
+        together with the billing plan and identity metadata for the API key.
+      responses:
+        '200':
+          description: Account credit balance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountCredits'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /status:
+    get:
+      operationId: pollBuildStatus
+      tags:
+        - Text to Speech
+        - Video
+      summary: Poll a build status URL
+      description: >-
+        Represents polling the pre-signed `statusUrl` returned by the polling
+        audio build and the video build. The actual URL is time-limited and
+        pre-signed, so no API key is required. Poll until `finished` is true, then
+        read the `result` download URL. This path is illustrative; always use the
+        exact statusUrl returned in the build response.
+      responses:
+        '200':
+          description: Current build status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BuildStatus'
+components:
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+  responses:
+    Unauthorized:
+      description: Missing or invalid API key, or the account is not eligible for API access.
+    TooManyRequests:
+      description: The daily request quota (default 86,400 per day, 1 per second) was exceeded.
+  schemas:
+    BuildTask:
+      type: object
+      description: Response from a polling audio build or a video build.
+      properties:
+        statusUrl:
+          type: string
+          format: uri
+          description: Pre-signed URL to poll for build progress and the final result.
+    BuildStatus:
+      type: object
+      description: The state of an asynchronous build, returned when polling the status URL.
+      properties:
+        message:
+          type: string
+          description: Status or error message.
+        finished:
+          type: boolean
+          description: True when the build has completed (successfully or not).
+        succeeded:
+          type: boolean
+          description: True when the build finished successfully.
+        percent:
+          type: integer
+          description: Build progress from 0 to 100.
+        result:
+          type: string
+          format: uri
+          description: Download URL for the finished audio or video (valid for a limited time).
+        poster:
+          type: string
+          format: uri
+          description: Poster image URL for a finished video (video builds only).
+        durationInSeconds:
+          type: integer
+          description: Duration of the produced media in seconds.
+    UploadRequest:
+      type: object
+      description: Pre-signed upload location and identifiers for a video zip archive.
+      properties:
+        url:
+          type: string
+          format: uri
+          description: Pre-signed URL to PUT the zip archive to (no API key on this request).
+        contentType:
+          type: string
+          description: Content-Type header value to use when uploading the zip.
+        repository:
+          type: string
+          description: Identifier of the uploaded repository, passed to the build endpoint.
+        repositoryType:
+          type: string
+          description: Type of the repository, passed to the build endpoint.
+    VideoBuildRequest:
+      type: object
+      required:
+        - source
+      properties:
+        source:
+          type: string
+          description: Path to the Markdown or text script inside the uploaded archive.
+          example: script.md
+        repository:
+          type: string
+          description: The repository identifier returned by the upload request.
+        repositoryType:
+          type: string
+          description: The repository type returned by the upload request, or a public zip URL type.
+    Voice:
+      type: object
+      description: A voice available for audio and video production.
+      properties:
+        name:
+          type: string
+          description: Voice identifier used with the text-to-speech voice query parameter.
+          example: mickey
+        language:
+          type: string
+          description: Human-friendly language / dialect description.
+          example: English (US)
+        languageCode:
+          type: string
+          description: Locale code.
+          example: en-US
+        styles:
+          type: array
+          description: Supported narration styles for the voice.
+          items:
+            type: string
+    AccountCredits:
+      type: object
+      properties:
+        creditSeconds:
+          type: integer
+          description: Quantity of credit seconds still available for the account.
+        requestId:
+          type: string
+          description: Internal request identifier.
+        identity:
+          type: string
+          description: The API access key ID that made the request.
+        billingId:
+          type: string
+          description: Billing plan identifier.
+        plan:
+          type: string
+          description: Billing plan type (for example, TOPUP).
+          example: TOPUP

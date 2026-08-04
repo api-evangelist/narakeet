@@ -1,0 +1,20 @@
+{
+  "provider": "narakeet",
+  "sources": [
+    "narakeet-account-api-openapi.yml",
+    "narakeet-text-to-speech-api-openapi.yml",
+    "narakeet-video-api-openapi.yml",
+    "narakeet-voices-api-openapi.yml"
+  ],
+  "outputs": [
+    "narakeet-account-api-openapi.yml",
+    "narakeet-text-to-speech-api-openapi.yml",
+    "narakeet-video-api-openapi.yml",
+    "narakeet-voices-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}
