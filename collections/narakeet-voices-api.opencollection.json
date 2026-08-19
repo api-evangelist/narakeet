@@ -1,0 +1,37 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Narakeet Account Voices API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "x-api-key",
+      "value": "{{x-api-key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Voices",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List available voices",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.narakeet.com/voices"
+          },
+          "docs": "Returns a JSON array of the voices available to your account. This endpoint does not consume credits, but each call counts toward the daily request quota; caching the result (for example once per day) is recommended."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

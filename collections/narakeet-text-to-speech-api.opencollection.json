@@ -1,0 +1,74 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Narakeet Account Text to Speech API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "x-api-key",
+      "value": "{{x-api-key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Text to Speech",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Build speech audio from text",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.narakeet.com/text-to-speech/:format",
+            "params": [
+              {
+                "name": "format",
+                "value": "",
+                "type": "path",
+                "description": "Output audio format. WAV is only available via the polling API."
+              },
+              {
+                "name": "voice",
+                "value": "",
+                "type": "query",
+                "description": "Name of the voice to use (see the Voices endpoint for valid names)."
+              },
+              {
+                "name": "voice-speed",
+                "value": "",
+                "type": "query",
+                "description": "Reading speed multiplier (1.2 = 20% faster, 0.8 = 20% slower)."
+              },
+              {
+                "name": "voice-volume",
+                "value": "",
+                "type": "query",
+                "description": "Relative loudness of the narration."
+              }
+            ]
+          },
+          "docs": "Converts text (or SubRip / WebVTT subtitle input) into narrated audio. Two modes are selected by the `Accept` header. With `Accept: application/octet-stream` the endpoint operates as a short-content streaming API - input is limited to about 1 KB and the audio bytes are returned directly in the response, with the duration in the `x-duration-seconds` response header (WAV is not available in this mode). Without that Accept header the endpoint operates as a long-content polling API - input up to abo"
+        },
+        {
+          "info": {
+            "name": "Poll a build status URL",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.narakeet.com/status"
+          },
+          "docs": "Represents polling the pre-signed `statusUrl` returned by the polling audio build and the video build. The actual URL is time-limited and pre-signed, so no API key is required. Poll until `finished` is true, then read the `result` download URL. This path is illustrative; always use the exact statusUrl returned in the build response."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

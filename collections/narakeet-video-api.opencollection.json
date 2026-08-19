@@ -1,0 +1,63 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Narakeet Account Video API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "x-api-key",
+      "value": "{{x-api-key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Video",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Request a video upload token",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.narakeet.com/video/upload-request/zip"
+          },
+          "docs": "Requests a pre-signed upload location for a zip archive containing the video script and its assets. Returns the pre-signed `url` to PUT the zip to, along with the `repository` and `repositoryType` identifiers to pass to the build endpoint."
+        },
+        {
+          "info": {
+            "name": "Trigger a video build",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.narakeet.com/video/build",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Starts an asynchronous video build from a previously uploaded zip archive (or a public zip URL). Returns a JSON object with a `statusUrl` to poll until the build finishes."
+        },
+        {
+          "info": {
+            "name": "Poll a build status URL",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.narakeet.com/status"
+          },
+          "docs": "Represents polling the pre-signed `statusUrl` returned by the polling audio build and the video build. The actual URL is time-limited and pre-signed, so no API key is required. Poll until `finished` is true, then read the `result` download URL. This path is illustrative; always use the exact statusUrl returned in the build response."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,488 @@
+{
+  "item": [
+    {
+      "id": "b53b7e91-7bc4-43f5-b696-c50bc4611de9",
+      "name": "Video",
+      "description": {
+        "content": "Build video from a Markdown script and assets packaged as a zip archive.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "13550aec-83d3-4ea7-9dbd-cd9f2d190363",
+          "name": "Request a video upload token",
+          "request": {
+            "name": "Request a video upload token",
+            "description": {
+              "content": "Requests a pre-signed upload location for a zip archive containing the video script and its assets. Returns the pre-signed `url` to PUT the zip to, along with the `repository` and `repositoryType` identifiers to pass to the build endpoint.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "video",
+                "upload-request",
+                "zip"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "b9ac533f-7cda-49aa-8c07-0942016f5a45",
+              "name": "Upload request created.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "video",
+                    "upload-request",
+                    "zip"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"url\": \"https://TqABYtfDOoifoGpRnREUkASlOSqHjA.ckoaip9mNFDC7Ymgmp-wIHS4BOhIiwhe7nj,eH5\",\n  \"contentType\": \"string\",\n  \"repository\": \"string\",\n  \"repositoryType\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7d1baa24-c2c5-4998-99dd-a6c5741893b9",
+              "name": "Missing or invalid API key, or the account is not eligible for API access.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "video",
+                    "upload-request",
+                    "zip"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "2bfc0e36-c76e-4ace-b7b7-fd71944c4afa",
+              "name": "The daily request quota (default 86,400 per day, 1 per second) was exceeded.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "video",
+                    "upload-request",
+                    "zip"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "f133488f-714f-4039-b94b-2419db34c422",
+          "name": "Trigger a video build",
+          "request": {
+            "name": "Trigger a video build",
+            "description": {
+              "content": "Starts an asynchronous video build from a previously uploaded zip archive (or a public zip URL). Returns a JSON object with a `statusUrl` to poll until the build finishes.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "video",
+                "build"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"source\": \"<string>\",\n  \"repository\": \"<string>\",\n  \"repositoryType\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "808dd366-9f7e-4299-a426-59653660309e",
+              "name": "Build started.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "video",
+                    "build"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"source\": \"script.md\",\n  \"repository\": \"<string>\",\n  \"repositoryType\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusUrl\": \"http://LTv.eqkPVyrigg5scCgCCib9.cyXyN.aBrqDt1a.y2.Gl5cAh\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "df523839-8ddd-4ccc-99ca-e94af81962d0",
+              "name": "Missing or invalid API key, or the account is not eligible for API access.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "video",
+                    "build"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"source\": \"script.md\",\n  \"repository\": \"<string>\",\n  \"repositoryType\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "298f02ca-d9d3-41d9-971e-34fafebbef06",
+              "name": "The daily request quota (default 86,400 per day, 1 per second) was exceeded.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "video",
+                    "build"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"source\": \"script.md\",\n  \"repository\": \"<string>\",\n  \"repositoryType\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "f222bb24-5ce7-4bbd-9fe6-ffcd94f1c84d",
+          "name": "Poll a build status URL",
+          "request": {
+            "name": "Poll a build status URL",
+            "description": {
+              "content": "Represents polling the pre-signed `statusUrl` returned by the polling audio build and the video build. The actual URL is time-limited and pre-signed, so no API key is required. Poll until `finished` is true, then read the `result` download URL. This path is illustrative; always use the exact statusUrl returned in the build response.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "status"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "4e85290a-9407-47e5-a961-146ab570260d",
+              "name": "Current build status.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "status"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"finished\": true,\n  \"succeeded\": false,\n  \"percent\": 4967,\n  \"result\": \"http://JbJbud.xdhaaZ-3qB,mwinj8cfAKDV5d9j4LZ6pFOLI8Fq9fhjOjUeLpss9Iqie86oPx5s8fS1\",\n  \"poster\": \"http://AtBduLArlskUwHLC.msohvejmSbmcKGYCqkKAjmi-9.-2wsv+o4uD0OlTW+3ifofecuOiWBTVBvsT9ShjVZKi5\",\n  \"durationInSeconds\": 201\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.narakeet.com",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "x-api-key"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "55090010-c2b5-42d9-a5f8-8840185b29e2",
+    "name": "Narakeet Account Video API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The Narakeet API turns text and Markdown scripts into narrated audio and video programmatically. It exposes a text-to-speech endpoint (returning MP3, M4A, or WAV) in two modes - a short-content streaming mode that returns audio bytes directly, and a long-content JSON polling mode that returns a status URL to poll while a longer build runs asynchronously - plus a Markdown-to-video build workflow (upload a zip of the script and assets, trigger a build, then poll for the finished MP4), a voice listing endpoint, and an account credits endpoint. All build requests authenticate with an `x-api-key` header. API access requires a top-up or metered commercial Narakeet account; free and unmetered accounts cannot use the API. The default quota is 86,400 requests per day (1 per second). Pre-signed status and result URLs returned by the polling and video workflows do not require the API key.\n\nContact Support:\n Name: Narakeet\n Email: contact@narakeet.com",
+      "type": "text/plain"
+    }
+  }
+}

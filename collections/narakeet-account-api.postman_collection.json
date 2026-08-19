@@ -1,0 +1,209 @@
+{
+  "item": [
+    {
+      "id": "1454d856-0ac2-4274-a8d8-f4f10b4739bb",
+      "name": "Account",
+      "description": {
+        "content": "Check remaining account credits.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "3400f720-b7d1-4b61-ad43-bde70ede407b",
+          "name": "Get remaining account credits",
+          "request": {
+            "name": "Get remaining account credits",
+            "description": {
+              "content": "Returns the quantity of credit seconds still available on the account, together with the billing plan and identity metadata for the API key.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "account",
+                "credits"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "00f9fb1d-c5be-42ef-a5f8-6bae11017b19",
+              "name": "Account credit balance.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "account",
+                    "credits"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"creditSeconds\": 5701,\n  \"requestId\": \"string\",\n  \"identity\": \"string\",\n  \"billingId\": \"string\",\n  \"plan\": \"TOPUP\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8b675c32-1480-476a-9415-e390f98e9725",
+              "name": "Missing or invalid API key, or the account is not eligible for API access.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "account",
+                    "credits"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "e775c1db-0ed3-4e6b-a66e-9a3a0b6d98e9",
+              "name": "The daily request quota (default 86,400 per day, 1 per second) was exceeded.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "account",
+                    "credits"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.narakeet.com",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "x-api-key"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "0bbae6d2-aad9-44c0-a50a-cfd04ae53902",
+    "name": "Narakeet Account API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The Narakeet API turns text and Markdown scripts into narrated audio and video programmatically. It exposes a text-to-speech endpoint (returning MP3, M4A, or WAV) in two modes - a short-content streaming mode that returns audio bytes directly, and a long-content JSON polling mode that returns a status URL to poll while a longer build runs asynchronously - plus a Markdown-to-video build workflow (upload a zip of the script and assets, trigger a build, then poll for the finished MP4), a voice listing endpoint, and an account credits endpoint. All build requests authenticate with an `x-api-key` header. API access requires a top-up or metered commercial Narakeet account; free and unmetered accounts cannot use the API. The default quota is 86,400 requests per day (1 per second). Pre-signed status and result URLs returned by the polling and video workflows do not require the API key.\n\nContact Support:\n Name: Narakeet\n Email: contact@narakeet.com",
+      "type": "text/plain"
+    }
+  }
+}
