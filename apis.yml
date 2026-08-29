@@ -12,6 +12,18 @@ description: Narakeet turns text and Markdown scripts into realistic narrated au
   builds always upload a zip, trigger a build, and poll for the finished MP4. All
   build requests authenticate with an x-api-key header, and API access requires a
   top-up or metered commercial account.
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: freemium
   onboarding: self-serve
