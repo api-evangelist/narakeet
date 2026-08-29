@@ -1,0 +1,38 @@
+slug: narakeet
+provider: Narakeet
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Media, Entertainment & Telecom Content
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 2
+edges:
+- tag: Text to Speech
+  spec_file: narakeet-text-to-speech-api-openapi.yml
+  capability_id: BC-3700
+  capability_id_l1: BC-3700
+  capability_name: Content Origination & Production Management
+  confidence: 0.7
+  evidence: POST /text-to-speech/{format} buildTextToSpeech 'Build speech audio from text'; 'turns text
+    and Markdown scripts into narrated audio'
+  reason: Operations generate delivery-ready narrated audio (MP3/M4A/WAV) from script text — this is audio
+    content origination/production. Mapped at L1 because the evidence does not clearly name a single sub-capability
+    (production vs post-production finishing).
+- tag: Video
+  spec_file: narakeet-video-api-openapi.yml
+  capability_id: BC-3700
+  capability_id_l1: BC-3700
+  capability_name: Content Origination & Production Management
+  confidence: 0.7
+  evidence: POST /video/build buildVideo 'Trigger a video build'; 'Markdown-to-video build workflow (upload
+    a zip of the script and assets, trigger a build, then poll for the finished MP4)'
+  reason: Assembles a finished MP4 video from a script and media assets — audiovisual content production/finishing.
+    Kept at L1 since the workflow spans assembly and rendering rather than one named sub-capability; the
+    upload/poll endpoints alone would be plumbing but the build operation is the substantive content-creation
+    act.

@@ -181,6 +181,9 @@ apis:
   - type: APIReference
     url: https://www.narakeet.com/docs/automating/account-credits-api/
 common:
+- type: CapabilityMap
+  url: capabilities/narakeet-capability-edges.yml
+  name: Narakeet Business Capability Map
 - type: AgenticAccess
   url: agentic-access/narakeet-agentic-access.yml
 - type: DomainSecurity
