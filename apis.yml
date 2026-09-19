@@ -157,6 +157,8 @@ apis:
   humanURL: https://www.narakeet.com/docs/automating/text-to-speech-api/
   baseURL: https://api.narakeet.com
   tags:
+  - Voice
+  tags_raw:
   - Voices
   properties:
   - type: OpenAPI
