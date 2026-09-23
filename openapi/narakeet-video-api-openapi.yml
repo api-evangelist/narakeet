@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
-  title: Narakeet Account Video API
-  description: The Narakeet API turns text and Markdown scripts into narrated audio and video programmatically. It exposes a text-to-speech endpoint (returning MP3, M4A, or WAV) in two modes - a short-content streaming mode that returns audio bytes directly, and a long-content JSON polling mode that returns a status URL to poll while a longer build runs asynchronously - plus a Markdown-to-video build workflow (upload a zip of the script and assets, trigger a build, then poll for the finished MP4), a voice listing endpoint, and an account credits endpoint. All build requests authenticate with an `x-api-key` header. API access requires a top-up or metered commercial Narakeet account; free and unmetered accounts cannot use the API. The default quota is 86,400 requests per day (1 per second). Pre-signed status and result URLs returned by the polling and video workflows do not require the API key.
+  title: Narakeet Video API
+  description: The Narakeet API turns text and Markdown scripts into narrated audio and video programmatically.
   version: '1.0'
   contact:
     name: Narakeet
@@ -89,6 +89,14 @@ components:
         repositoryType:
           type: string
           description: The repository type returned by the upload request, or a public zip URL type.
+    BuildTask:
+      type: object
+      description: Response from a polling audio build or a video build.
+      properties:
+        statusUrl:
+          type: string
+          format: uri
+          description: Pre-signed URL to poll for build progress and the final result.
     BuildStatus:
       type: object
       description: The state of an asynchronous build, returned when polling the status URL.
@@ -116,14 +124,6 @@ components:
         durationInSeconds:
           type: integer
           description: Duration of the produced media in seconds.
-    BuildTask:
-      type: object
-      description: Response from a polling audio build or a video build.
-      properties:
-        statusUrl:
-          type: string
-          format: uri
-          description: Pre-signed URL to poll for build progress and the final result.
     UploadRequest:
       type: object
       description: Pre-signed upload location and identifiers for a video zip archive.

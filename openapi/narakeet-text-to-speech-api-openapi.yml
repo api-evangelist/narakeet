@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
-  title: Narakeet Account Text to Speech API
-  description: The Narakeet API turns text and Markdown scripts into narrated audio and video programmatically. It exposes a text-to-speech endpoint (returning MP3, M4A, or WAV) in two modes - a short-content streaming mode that returns audio bytes directly, and a long-content JSON polling mode that returns a status URL to poll while a longer build runs asynchronously - plus a Markdown-to-video build workflow (upload a zip of the script and assets, trigger a build, then poll for the finished MP4), a voice listing endpoint, and an account credits endpoint. All build requests authenticate with an `x-api-key` header. API access requires a top-up or metered commercial Narakeet account; free and unmetered accounts cannot use the API. The default quota is 86,400 requests per day (1 per second). Pre-signed status and result URLs returned by the polling and video workflows do not require the API key.
+  title: Narakeet Text to Speech API
+  description: The Narakeet API turns text and Markdown scripts into narrated audio and video programmatically.
   version: '1.0'
   contact:
     name: Narakeet
@@ -13,14 +13,14 @@ servers:
 security:
 - apiKeyAuth: []
 tags:
-- name: Text to Speech
+- name: Text To Speech
   description: Build narrated audio (MP3, M4A, WAV) from text, SubRip, or WebVTT input.
 paths:
   /text-to-speech/{format}:
     post:
       operationId: buildTextToSpeech
       tags:
-      - Text to Speech
+      - Text To Speech
       summary: Build speech audio from text
       description: 'Converts text (or SubRip / WebVTT subtitle input) into narrated audio. Two modes are selected by the `Accept` header. With `Accept: application/octet-stream` the endpoint operates as a short-content streaming API - input is limited to about 1 KB and the audio bytes are returned directly in the response, with the duration in the `x-duration-seconds` response header (WAV is not available in this mode). Without that Accept header the endpoint operates as a long-content polling API - input up to about 1024 KB is accepted and the response is a JSON object containing a `statusUrl` to poll. Use `Accept: application/zip` with multi-scene input (scenes separated by `---`) for batch audio, or `Accept: application/json+vtt` to also receive subtitle result URLs.'
       parameters:
@@ -82,7 +82,7 @@ paths:
     get:
       operationId: pollBuildStatus
       tags:
-      - Text to Speech
+      - Text To Speech
       summary: Poll a build status URL
       description: Represents polling the pre-signed `statusUrl` returned by the polling audio build and the video build. The actual URL is time-limited and pre-signed, so no API key is required. Poll until `finished` is true, then read the `result` download URL. This path is illustrative; always use the exact statusUrl returned in the build response.
       responses:
@@ -93,6 +93,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/BuildStatus'
 components:
+  responses:
+    Unauthorized:
+      description: Missing or invalid API key, or the account is not eligible for API access.
+    TooManyRequests:
+      description: The daily request quota (default 86,400 per day, 1 per second) was exceeded.
   schemas:
     BuildTask:
       type: object
@@ -129,11 +134,6 @@ components:
         durationInSeconds:
           type: integer
           description: Duration of the produced media in seconds.
-  responses:
-    Unauthorized:
-      description: Missing or invalid API key, or the account is not eligible for API access.
-    TooManyRequests:
-      description: The daily request quota (default 86,400 per day, 1 per second) was exceeded.
   securitySchemes:
     apiKeyAuth:
       type: apiKey

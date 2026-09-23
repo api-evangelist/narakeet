@@ -1,10 +1,7 @@
 {
   "provider": "narakeet",
   "sources": [
-    "narakeet-account-api-openapi.yml",
-    "narakeet-text-to-speech-api-openapi.yml",
-    "narakeet-video-api-openapi.yml",
-    "narakeet-voices-api-openapi.yml"
+    "_original/narakeet-openapi.yml"
   ],
   "outputs": [
     "narakeet-account-api-openapi.yml",
@@ -15,6 +12,15 @@
   "archived": [],
   "errors": [],
   "warnings": [],
-  "notes": [],
-  "skipped": []
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "narakeet-openapi.yml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "narakeet-account-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "narakeet-text-to-speech-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "narakeet-video-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "narakeet-voices-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }
