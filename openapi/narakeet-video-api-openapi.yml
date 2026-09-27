@@ -74,21 +74,6 @@ paths:
                 $ref: '#/components/schemas/BuildStatus'
 components:
   schemas:
-    VideoBuildRequest:
-      type: object
-      required:
-      - source
-      properties:
-        source:
-          type: string
-          description: Path to the Markdown or text script inside the uploaded archive.
-          example: script.md
-        repository:
-          type: string
-          description: The repository identifier returned by the upload request.
-        repositoryType:
-          type: string
-          description: The repository type returned by the upload request, or a public zip URL type.
     BuildTask:
       type: object
       description: Response from a polling audio build or a video build.
@@ -141,6 +126,21 @@ components:
         repositoryType:
           type: string
           description: Type of the repository, passed to the build endpoint.
+    VideoBuildRequest:
+      type: object
+      required:
+      - source
+      properties:
+        source:
+          type: string
+          description: Path to the Markdown or text script inside the uploaded archive.
+          example: script.md
+        repository:
+          type: string
+          description: The repository identifier returned by the upload request.
+        repositoryType:
+          type: string
+          description: The repository type returned by the upload request, or a public zip URL type.
   responses:
     Unauthorized:
       description: Missing or invalid API key, or the account is not eligible for API access.

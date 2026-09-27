@@ -99,14 +99,6 @@ components:
     TooManyRequests:
       description: The daily request quota (default 86,400 per day, 1 per second) was exceeded.
   schemas:
-    BuildTask:
-      type: object
-      description: Response from a polling audio build or a video build.
-      properties:
-        statusUrl:
-          type: string
-          format: uri
-          description: Pre-signed URL to poll for build progress and the final result.
     BuildStatus:
       type: object
       description: The state of an asynchronous build, returned when polling the status URL.
@@ -134,6 +126,14 @@ components:
         durationInSeconds:
           type: integer
           description: Duration of the produced media in seconds.
+    BuildTask:
+      type: object
+      description: Response from a polling audio build or a video build.
+      properties:
+        statusUrl:
+          type: string
+          format: uri
+          description: Pre-signed URL to poll for build progress and the final result.
   securitySchemes:
     apiKeyAuth:
       type: apiKey

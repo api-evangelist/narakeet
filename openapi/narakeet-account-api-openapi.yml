@@ -35,11 +35,6 @@ paths:
         '429':
           $ref: '#/components/responses/TooManyRequests'
 components:
-  responses:
-    Unauthorized:
-      description: Missing or invalid API key, or the account is not eligible for API access.
-    TooManyRequests:
-      description: The daily request quota (default 86,400 per day, 1 per second) was exceeded.
   schemas:
     AccountCredits:
       type: object
@@ -60,6 +55,11 @@ components:
           type: string
           description: Billing plan type (for example, TOPUP).
           example: TOPUP
+  responses:
+    Unauthorized:
+      description: Missing or invalid API key, or the account is not eligible for API access.
+    TooManyRequests:
+      description: The daily request quota (default 86,400 per day, 1 per second) was exceeded.
   securitySchemes:
     apiKeyAuth:
       type: apiKey
