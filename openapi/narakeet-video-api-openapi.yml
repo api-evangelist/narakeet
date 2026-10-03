@@ -74,41 +74,6 @@ paths:
                 $ref: '#/components/schemas/BuildStatus'
 components:
   schemas:
-    BuildTask:
-      type: object
-      description: Response from a polling audio build or a video build.
-      properties:
-        statusUrl:
-          type: string
-          format: uri
-          description: Pre-signed URL to poll for build progress and the final result.
-    BuildStatus:
-      type: object
-      description: The state of an asynchronous build, returned when polling the status URL.
-      properties:
-        message:
-          type: string
-          description: Status or error message.
-        finished:
-          type: boolean
-          description: True when the build has completed (successfully or not).
-        succeeded:
-          type: boolean
-          description: True when the build finished successfully.
-        percent:
-          type: integer
-          description: Build progress from 0 to 100.
-        result:
-          type: string
-          format: uri
-          description: Download URL for the finished audio or video (valid for a limited time).
-        poster:
-          type: string
-          format: uri
-          description: Poster image URL for a finished video (video builds only).
-        durationInSeconds:
-          type: integer
-          description: Duration of the produced media in seconds.
     UploadRequest:
       type: object
       description: Pre-signed upload location and identifiers for a video zip archive.
@@ -141,11 +106,46 @@ components:
         repositoryType:
           type: string
           description: The repository type returned by the upload request, or a public zip URL type.
+    BuildStatus:
+      type: object
+      description: The state of an asynchronous build, returned when polling the status URL.
+      properties:
+        message:
+          type: string
+          description: Status or error message.
+        finished:
+          type: boolean
+          description: True when the build has completed (successfully or not).
+        succeeded:
+          type: boolean
+          description: True when the build finished successfully.
+        percent:
+          type: integer
+          description: Build progress from 0 to 100.
+        result:
+          type: string
+          format: uri
+          description: Download URL for the finished audio or video (valid for a limited time).
+        poster:
+          type: string
+          format: uri
+          description: Poster image URL for a finished video (video builds only).
+        durationInSeconds:
+          type: integer
+          description: Duration of the produced media in seconds.
+    BuildTask:
+      type: object
+      description: Response from a polling audio build or a video build.
+      properties:
+        statusUrl:
+          type: string
+          format: uri
+          description: Pre-signed URL to poll for build progress and the final result.
   responses:
-    Unauthorized:
-      description: Missing or invalid API key, or the account is not eligible for API access.
     TooManyRequests:
       description: The daily request quota (default 86,400 per day, 1 per second) was exceeded.
+    Unauthorized:
+      description: Missing or invalid API key, or the account is not eligible for API access.
   securitySchemes:
     apiKeyAuth:
       type: apiKey
