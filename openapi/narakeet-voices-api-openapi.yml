@@ -37,11 +37,6 @@ paths:
         '429':
           $ref: '#/components/responses/TooManyRequests'
 components:
-  responses:
-    TooManyRequests:
-      description: The daily request quota (default 86,400 per day, 1 per second) was exceeded.
-    Unauthorized:
-      description: Missing or invalid API key, or the account is not eligible for API access.
   schemas:
     Voice:
       type: object
@@ -64,6 +59,11 @@ components:
           description: Supported narration styles for the voice.
           items:
             type: string
+  responses:
+    TooManyRequests:
+      description: The daily request quota (default 86,400 per day, 1 per second) was exceeded.
+    Unauthorized:
+      description: Missing or invalid API key, or the account is not eligible for API access.
   securitySchemes:
     apiKeyAuth:
       type: apiKey

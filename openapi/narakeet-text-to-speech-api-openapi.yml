@@ -93,11 +93,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/BuildStatus'
 components:
-  responses:
-    TooManyRequests:
-      description: The daily request quota (default 86,400 per day, 1 per second) was exceeded.
-    Unauthorized:
-      description: Missing or invalid API key, or the account is not eligible for API access.
   schemas:
     BuildStatus:
       type: object
@@ -134,6 +129,11 @@ components:
           type: string
           format: uri
           description: Pre-signed URL to poll for build progress and the final result.
+  responses:
+    TooManyRequests:
+      description: The daily request quota (default 86,400 per day, 1 per second) was exceeded.
+    Unauthorized:
+      description: Missing or invalid API key, or the account is not eligible for API access.
   securitySchemes:
     apiKeyAuth:
       type: apiKey
