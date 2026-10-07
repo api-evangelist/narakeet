@@ -184,6 +184,8 @@ apis:
   - type: APIReference
     url: https://www.narakeet.com/docs/automating/account-credits-api/
 common:
+- type: Pricing
+  url: https://www.narakeet.com/docs/pricing/
 - type: CapabilityMap
   url: capabilities/narakeet-capability-edges.yml
   name: Narakeet Business Capability Map
