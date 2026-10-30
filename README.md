@@ -1,4 +1,4 @@
-# Narakeet (narakeet)
+# Narakeet
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -64,139 +64,124 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Narakeet turns text and Markdown scripts into realistic narrated audio and video using AI text-to-speech voices - 900 voices across 100 languages. Beyond its web app, Narakeet exposes a documented REST API (base `https://api.narakeet.com`) for building speech audio, building video from Markdown, listing voices, and checking account credits.
+Narakeet turns text and Markdown scripts into realistic narrated audio and video using AI text-to-speech voices - 900 voices across 100 languages. Beyond its web app, Narakeet exposes a documented REST API (base https://api.narakeet.com) for building speech audio (MP3, M4A, WAV) from text, building video from Markdown scripts and assets, listing available voices, and checking account credits. Audio builds run either as a short-content streaming call that returns bytes directly or as a long-content asynchronous build that returns a status URL to poll; video builds always upload a zip, trigger a build, and poll for the finished MP4. All build requests authenticate with an x-api-key header, and API access requires a top-up or metered commercial account.
 
-**APIs.json:** [https://raw.githubusercontent.com/api-evangelist/narakeet/refs/heads/main/apis.yml](https://raw.githubusercontent.com/api-evangelist/narakeet/refs/heads/main/apis.yml)
+**Areas:** Text-to-Speech · TTS · Voice · Audio · Video · Artificial Intelligence · Media Generation
 
-## Access Model
+## Narakeet on APIs.io
 
-- **Base URL:** `https://api.narakeet.com`
-- **Authentication:** an `x-api-key` header on every build request. The key is created in the account management interface.
-- **Eligibility:** API access is only available on **top-up or metered commercial accounts**. Free and unmetered accounts cannot use the API.
-- **Quota:** the default limit is **86,400 requests per day (1 per second)**; higher limits are available on request (contact@narakeet.com).
-- **Async pattern:** longer audio builds and all video builds are **asynchronous**. The build call returns a JSON object with a `statusUrl`; the client **polls** that pre-signed URL (no API key required) until `finished` is true, then downloads from the `result` URL. This is HTTP polling, not a WebSocket or Server-Sent Events stream. Short audio builds instead return the audio bytes directly in a single synchronous response.
+Everything profiled for Narakeet is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/narakeet/](https://apis.io/providers/narakeet/)** — or go straight to one of the APIs or properties below.
 
-## Tags
+### APIs (4)
 
-- Text to Speech
-- TTS
-- Voice
-- Audio
-- Video
-- AI
-- Media Generation
+- [Narakeet Account API](https://apis.io/apis/narakeet/narakeet-account-api/) — Check remaining account credits.
+- [Narakeet Text to Speech API](https://apis.io/apis/narakeet/narakeet-text-to-speech-api/) — Build narrated audio (MP3, M4A, WAV) from text, SubRip, or WebVTT input.
+- [Narakeet Video API](https://apis.io/apis/narakeet/narakeet-video-api/) — Build video from a Markdown script and assets packaged as a zip archive.
+- [Narakeet Voices API](https://apis.io/apis/narakeet/narakeet-voices-api/) — List the voices available for audio and video production.
 
-## Timestamps
+### Published properties
 
-- **Created:** 2026-07-11
-- **Modified:** 2026-07-11
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-## APIs
+#### Agentic access (1)
 
-### Narakeet Text to Speech API
+Which operations an agent can call, which act, and which need a human in the loop.
 
-Convert text, SubRip, or WebVTT input into narrated audio in MP3, M4A, or WAV. Two modes share the same `POST /text-to-speech/{format}` endpoint, selected by the `Accept` header:
+- [Narakeet Agentic Access](https://apis.io/agentic-access/narakeet/narakeet-agentic-access/)
 
-- **Short content (streaming):** `Accept: application/octet-stream`, input up to ~1 KB, must complete within ~30 seconds. Returns audio bytes directly; duration is in the `x-duration-seconds` response header. (WAV is not available in this mode.)
-- **Long content (JSON polling):** no octet-stream Accept header, input up to ~1024 KB, may take up to ~45 minutes. Returns a JSON `statusUrl` to poll.
+#### Collections (5)
 
-Voice, speed, and volume are set via query parameters (`voice`, `voice-speed`, `voice-volume`). `Accept: application/zip` produces batch audio from multi-scene input (scenes separated by `---`), and `Accept: application/json+vtt` also returns subtitle result URLs.
+Postman and Open Collection request collections.
 
-- **Human URL:** [https://www.narakeet.com/docs/automating/text-to-speech-api/](https://www.narakeet.com/docs/automating/text-to-speech-api/)
-- **Base URL:** `https://api.narakeet.com`
+- [Narakeet API](https://apis.io/collections/narakeet/open-narakeet/)
+- [Narakeet Account API](https://apis.io/collections/narakeet/open-narakeet-account-api/)
+- [Narakeet Account Text to Speech API](https://apis.io/collections/narakeet/open-narakeet-text-to-speech-api/)
+- [Narakeet Account Video API](https://apis.io/collections/narakeet/open-narakeet-video-api/)
+- [Narakeet Account Voices API](https://apis.io/collections/narakeet/open-narakeet-voices-api/)
 
-#### Tags
+#### Security (2)
 
-- Text to Speech
-- TTS
-- Audio
+Authentication, trust centre, and vulnerability disclosure.
 
-#### Properties
+- [Narakeet Authentication](https://apis.io/security/narakeet/narakeet-authentication/)
+- [Narakeet Domain Security](https://apis.io/security/narakeet/narakeet-domain-security/)
 
-- [Documentation](https://www.narakeet.com/docs/automating/text-to-speech-api/)
-- [API Reference](https://www.narakeet.com/docs/automating/text-to-speech-api/)
-- [OpenAPI](openapi/narakeet-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/narakeet.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/narakeet.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+#### Plans and pricing (1)
 
-### Narakeet Markdown to Video API
+Published plans, tiers and prices.
 
-Build narrated video from a Markdown or text script plus its assets. Request a pre-signed upload token (`GET /video/upload-request/zip`), `PUT` a zip archive of the script and media to the returned URL, trigger a build (`POST /video/build`), then poll the returned `statusUrl` for the finished video and poster image.
+- [Narakeet Plans Pricing](https://apis.io/plans/narakeet/narakeet-plans-pricing/)
 
-- **Human URL:** [https://www.narakeet.com/docs/automating/video-api/](https://www.narakeet.com/docs/automating/video-api/)
-- **Base URL:** `https://api.narakeet.com`
+#### Rate limits (1)
 
-#### Tags
+Published request limits.
 
-- Video
-- Markdown
-- Media Generation
+- [Narakeet Rate Limits](https://apis.io/rate-limits/narakeet/narakeet-rate-limits/)
 
-#### Properties
+#### FinOps (1)
 
-- [Documentation](https://www.narakeet.com/docs/automating/video-api/)
-- [API Reference](https://www.narakeet.com/docs/automating/video-api/)
-- [OpenAPI](openapi/narakeet-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/narakeet.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/narakeet.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+What the API costs to run, by operation.
 
-### Narakeet Voice Listing API
+- [Narakeet Finops](https://apis.io/finops/narakeet/narakeet-finops/)
 
-Retrieve the JSON list of voices available to your account (`GET /voices`) - each with a name, language description, locale code, and supported narration styles - so integrations can keep an up-to-date voice picker. Does not consume credits but counts toward the daily request quota; caching (once per day) is recommended.
+## Where to find this API
 
-- **Human URL:** [https://www.narakeet.com/docs/automating/listing-voices-api/](https://www.narakeet.com/docs/automating/listing-voices-api/)
-- **Base URL:** `https://api.narakeet.com`
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
 
-#### Tags
-
-- Voices
-- Languages
-- Catalog
-
-#### Properties
-
-- [Documentation](https://www.narakeet.com/docs/automating/listing-voices-api/)
-- [API Reference](https://www.narakeet.com/docs/automating/listing-voices-api/)
-- [OpenAPI](openapi/narakeet-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/narakeet.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/narakeet.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-### Narakeet Account Credits API
-
-Check the credit seconds still available on your account (`GET /account/credits`), along with the billing plan and the identity of the API key. Useful for gating jobs and surfacing remaining balance before starting a long audio or video build.
-
-- **Human URL:** [https://www.narakeet.com/docs/automating/account-credits-api/](https://www.narakeet.com/docs/automating/account-credits-api/)
-- **Base URL:** `https://api.narakeet.com`
-
-#### Tags
-
-- Account
-- Credits
-- Billing
-
-#### Properties
-
-- [Documentation](https://www.narakeet.com/docs/automating/account-credits-api/)
-- [API Reference](https://www.narakeet.com/docs/automating/account-credits-api/)
-- [OpenAPI](openapi/narakeet-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/narakeet.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/narakeet.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-## Common Properties
-
-- [LinkedIn](https://www.linkedin.com/company/narakeet)
 - [Website](https://www.narakeet.com)
 - [Documentation](https://www.narakeet.com/docs/automating/)
-- [Plans](plans/narakeet-plans-pricing.yml)
-- [Rate Limits](rate-limits/narakeet-rate-limits.yml)
-- [Fin Ops](finops/narakeet-finops.yml)
+- [Pricing](https://www.narakeet.com/docs/pricing/)
 - [Blog](https://www.narakeet.com/news/)
 
-## Pricing
+## API Evangelist rating
 
-Narakeet bills on a **top-up credit model** measured by the duration of audio/video produced; credits never expire. The confirmed entry pack is **6 USD for 30 minutes (~$0.20/minute)**, with larger packs (300, 1000, 2500, 10,000 minutes) offering progressively lower per-minute rates. A free-forever tier exists for evaluation but has **no API access and no commercial use**.
+**Kin Score 33.3** — thin · rubric 0.24.0 · scored 2026-10-17
 
-## Maintainers
+| Facet | Score |
+|---|---|
+| Discoverability | 66.1 |
+| Contract quality | 50.5 |
+| Contract governance | 0.0 |
+| Operational transparency | 7.9 |
+| Developer ergonomics | 32.1 |
+| Access clarity | 42.1 |
 
-**FN:** Kin Lane
-**Email:** kin@apievangelist.com
+**Agent readiness 20.4** — agent-aware
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | — |
+| OpenAPI Examples | partial |
+| Rate Limit Signal | derived (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+
+**Regulatory alignment 10.9** — AI & Biometrics
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/narakeet/](https://apis.io/providers/narakeet/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Narakeet: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/narakeet/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
